@@ -87,3 +87,6 @@ docs/_build/
 .vscode/
 
 logs/*
+
+results
+results/*
