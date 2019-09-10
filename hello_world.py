@@ -10,7 +10,26 @@ class MakeDirectory(luigi.Task):
         return luigi.LocalTarget(self.path)
 
     def run(self):
-        os.makedirs(self.path)        
+        os.makedirs(self.path)     
+
+
+class PrintWordTask(luigi.Task):
+
+    path = luigi.Parameter()
+    word = luigi.Parameter()
+
+    def output(self):
+        return luigi.LocalTarget(self.path)
+
+    def run(self):
+        with open(self.path, 'w') as output_file:
+            output_file.write(self.word)
+            output_file.close()
+
+    def requires(self):
+        return [
+            MakeDirectory(path=os.path.dirname(self.path))
+        ]
 
 
 class WorldTask(luigi.Task):
@@ -70,13 +89,15 @@ class HelloWorldTask(luigi.Task):
 
     def requires(self):
         return [
-            HelloTask(
-                path="results/{}/hello.txt".format(self.id)
+
+            PrintWordTask(
+                path="results/{}/hello.txt".format(self.id), word = 'Hello'
             ),
 
-            WorldTask(
-                path="results/{}/world.txt".format(self.id)
+            PrintWordTask(
+                path="results/{}/world.txt".format(self.id), word = 'World'
             )
+            
         ]
 
     def output(self):
